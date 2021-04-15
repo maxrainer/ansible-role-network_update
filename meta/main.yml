@@ -1,0 +1,22 @@
+dependencies: []
+
+collections: 
+  - cisco.ios
+  - cisco.nxos
+
+galaxy_info:
+  role_name: network_update
+  author: Markus Rainer
+  description: Role for Demo and Labs on network device updates
+  company: Red Hat
+
+  license: MIT
+
+  min_ansible_version: 2.9
+
+  platforms: 
+    - name: GenericUNIX
+      versions:
+        - all
+
+  galaxy_tags: [cisco, eos, ios, arista, demo, lab, networking, update, upgrade]
