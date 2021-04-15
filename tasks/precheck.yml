@@ -5,6 +5,3 @@
     data:
       cachedvar: "new cache var"  
     per_host: yes
-
-- debug:
-    var: cachedvar
