@@ -1,0 +1,7 @@
+---
+
+- include_tasks: precheck.yml
+  tags: [precheck]
+
+- include_tasks: postcheck.yml
+  tags: [postcheck]

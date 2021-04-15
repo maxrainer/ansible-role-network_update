@@ -1,0 +1,4 @@
+---
+
+- set_fact:
+    update_foo: "bar new"
