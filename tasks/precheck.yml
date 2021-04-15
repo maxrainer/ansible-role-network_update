@@ -1,4 +1,10 @@
 ---
 
-- set_fact:
-    update_foo: "bar new"
+- name: set stat module
+  set_stats: 
+    data:
+      cachedvar: "new cache var"  
+    per_host: yes
+
+- debug:
+    var: cachedvar

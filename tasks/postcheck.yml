@@ -2,4 +2,4 @@
 
 - name: debug var
   debug: 
-    var: update_foo
+    var: cachedvar
