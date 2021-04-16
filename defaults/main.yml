@@ -1,3 +1,4 @@
 ---
 
-update_foo: "bar"
+update_check_command: show ip interface brief
+update_check_parser: ansible.netcommon.pyats

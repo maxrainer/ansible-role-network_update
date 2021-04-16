@@ -1,11 +1,34 @@
 ---
+# precheck
 
+# - name: get facts
+#   cisco.nxos.nxos_facts:
+#   register: _facts
+# - name: debug facts
+#   debug: 
+#     var: _facts
+
+- name: get boot variables from device
+  ansible.utils.cli_parse:
+    command: "show boot"
+    parser:
+      name: "{{ update_check_parser }}"
+  register: _boot
+- debug:
+    var: _boot
+
+- name: grep precheck output from device
+  ansible.utils.cli_parse:
+    command: "{{ update_check_command }}"
+    parser: 
+      name: "{{ update_check_parser }}"
+  register: _check
+
+- debug:
+    var: _check
+  
 - name: set stat module
   set_stats: 
     data:
       cachedvar: "new cache var"  
     per_host: no
-
-- debug: 
-    var: vars
-

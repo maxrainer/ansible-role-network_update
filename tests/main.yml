@@ -1,9 +1,10 @@
 ---
 
 - name: MAIN
-  hosts: localhost
+  hosts: nxos
   gather_facts: no
   connection: network_cli
   roles: 
     - ../../network-update
-  
+  # vars:
+  #   - ansible_python_interpreter: ansible_playbook_python
