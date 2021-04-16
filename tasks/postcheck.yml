@@ -1,5 +1,9 @@
 ---
 
-- name: debug var
+- name: debug vars
+  debug: 
+    var: vars
+
+- name: debug cachedvar
   debug: 
     var: cachedvar

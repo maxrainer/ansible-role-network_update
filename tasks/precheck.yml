@@ -4,4 +4,8 @@
   set_stats: 
     data:
       cachedvar: "new cache var"  
-    per_host: yes
+    per_host: no
+
+- debug: 
+    var: vars
+

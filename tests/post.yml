@@ -1,9 +1,8 @@
 ---
 
-- name: MAIN
+- name: POST
   hosts: localhost
   gather_facts: no
   connection: network_cli
   roles: 
     - ../../network-update
-  
