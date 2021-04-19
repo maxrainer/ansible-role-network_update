@@ -17,7 +17,7 @@
 - debug:
     var: _boot
 
-- name: grep precheck output from device
+- name: grep reference output from device for later comparison
   ansible.utils.cli_parse:
     command: "{{ update_check_command }}"
     parser: 

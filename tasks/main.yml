@@ -6,6 +6,12 @@
       tags: precheck
   tags: [precheck]
 
+- include_tasks: 
+    file: upgrade.yml
+    apply:
+      tags: upgrade
+  tags: [upgrade]
+
 - include_tasks:
     file: postcheck.yml
     apply:

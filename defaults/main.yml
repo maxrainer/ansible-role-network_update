@@ -2,3 +2,16 @@
 
 update_check_command: show ip interface brief
 update_check_parser: ansible.netcommon.pyats
+
+update_server_protocol: scp
+update_server_filesystem: "bootflash:"
+update_server_timeout: 300
+update_server_ipv4: 127.0.0.1
+update_server_user: user
+update_server_password: changeme
+update_server_directory: "/"
+update_file_name: filename.bin
+update_local_vrf: management
+# chksum, md5sum
+update_file_checksum_methode: cksum
+update_file_checksum: ""
