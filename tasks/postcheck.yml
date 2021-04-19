@@ -1,9 +1,23 @@
 ---
+# post check after update done
 
-- name: debug vars
-  debug: 
-    var: vars
+- name: POST CHECK BLOCK
+  block:
+  - name: "check again: {{ update_check_command }}"
+    ansible.utils.cli_parse:
+      command: "{{ update_check_command }}"
+      parser: 
+        name: "{{ update_check_parser }}"
+    register: _postupdate_check
 
-- name: debug cachedvar
-  debug: 
-    var: cachedvar
+  - name: compare reference and postcheck results
+    assert:
+      that: 
+      - _reference_check.parsed == _postupdate_check.parsed
+      fail_msg: output pre and post checks not equal
+      success_msg: pre and post checks are equal
+
+  rescue:
+  - name: enable rollback process
+    set_fact:
+      _rollback: true

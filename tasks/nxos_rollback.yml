@@ -1,0 +1,12 @@
+---
+
+
+
+- name: ROLLBACK NXOS image to initial state version 
+  block:
+  - name: install previous image
+    check_mode: no
+    cisco.nxos.nxos_install_os:
+      system_image_file: "{{ _old_kickstart_image }}"
+  
+  when: _old_kickstart_image != ""

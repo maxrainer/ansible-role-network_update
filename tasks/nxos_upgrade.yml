@@ -1,6 +1,9 @@
 ---
 # main upgrade part
 
+#
+# COPY BLOCK
+#
 - name: Cisco NXOS file copy block
   block:
   - name: check file presence on device
@@ -61,8 +64,10 @@
           answer: y
   - set_fact:
       _failed: true
-  when: inventory_hostname in groups['nxos']
 
+#
+# INSTALL OS IMAGE BLOCK
+#
 - name: Cisco NXOS software update block
   block: 
   - name: install OS on device
@@ -92,12 +97,15 @@
       delay: 30
     vars:
       ansible_connection: local
-  - name: check installed OS for expected version
+  - name: get installed OS version
     cisco.nxos.nxos_command:
       commands: show version | json
     register: _kickstart
-  - assert:
+  - name: check installed and expected OS version
+    assert:
       that:
-      - _kickstart['stdout'][0]['kickstart_ver_str'] == update_kickstart_version
+        - _kickstart['stdout'][0]['kickstart_ver_str'] == update_kickstart_version
+      success_msg: right kickstart version detected
+      fail_msg: wrong kickstart version detected
 
-  when: inventory_hostname in groups['nxos'] and not _failed
+  when: not _failed

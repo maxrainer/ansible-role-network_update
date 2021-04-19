@@ -7,10 +7,11 @@
   tags: [precheck]
 
 - include_tasks: 
-    file: upgrade.yml
+    file: nxos_upgrade.yml
     apply:
       tags: upgrade
   tags: [upgrade]
+  when: ansible_network_os == 'nxos'
 
 - include_tasks:
     file: postcheck.yml

@@ -2,3 +2,9 @@
 
 _ready: false
 _failed: false
+_rollback: false
+
+_old_kickstart_image: ""
+_old_kickstart: ""
+
+_reference_check: ""

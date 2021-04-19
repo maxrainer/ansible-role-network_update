@@ -8,27 +8,31 @@
 #   debug: 
 #     var: _facts
 
-- name: get boot variables from device
-  ansible.utils.cli_parse:
-    command: "show boot"
-    parser:
-      name: "{{ update_check_parser }}"
-  register: _boot
-- debug:
-    var: _boot
+- name: Cisco NXOS get old status
+  block:
+  - name: get current installed OS version
+    cisco.nxos.nxos_command:
+      commands: show version | json
+    register: _old_version
+  - set_fact:
+      _old_kickstart: "{{ _old_version['stdout'][0]['kickstart_ver_str'] }}"
+      _old_kickstart_image: "{{ _old_version['stdout'][0]['kick_file_name'] | regex_replace('^.*:///') }}"
+  - debug: 
+      var: _old_kickstart_image
+  when: ansible_network_os == 'nxos'
 
 - name: grep reference output from device for later comparison
   ansible.utils.cli_parse:
     command: "{{ update_check_command }}"
     parser: 
       name: "{{ update_check_parser }}"
-  register: _check
+  register: _reference_check
 
 - debug:
-    var: _check
+    var: _reference_check.parsed
   
-- name: set stat module
-  set_stats: 
-    data:
-      cachedvar: "new cache var"  
-    per_host: no
+# - name: set stat module
+#   set_stats: 
+#     data:
+#       cachedvar: "new cache var"  
+#     per_host: no
