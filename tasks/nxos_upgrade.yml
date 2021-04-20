@@ -19,36 +19,57 @@
       commands: "show file bootflash:{{ update_file_name }} {{ update_file_checksum_method }}"
     when: update_file_checksum != "" and _filepresence.stdout[0] != ""
     register: _checksum
+  - debug:
+      var: _checksum
+      verbosity: 2
   - name: skip this if file not present or checksum invalid
     set_fact:
       _ready: true
-    when: _filepresence.stdout[0] != "" or
-       (_checksum.changed and _checksum.stdout[0] == update_file_checksum)
+    when: _filepresence.stdout[0] != "" and _checksum.stdout[0] == update_file_checksum
 
-  - name: copy image from server 
-    cisco.nxos.nxos_file_copy: 
-      file_pull: true
-      file_pull_protocol: "{{ update_server_protocol }}"
-      file_system: "{{ update_server_filesystem }}"
-      local_file: "{{ update_file_name }}"
-      remote_file: "{{update_server_directory}}{{ update_file_name }}"
-      remote_scp_server: "{{ update_server_ipv4 }}"
-      remote_scp_server_user: "{{ update_server_user }}"
-      remote_scp_server_password: "{{ update_server_password }}"
-      vrf: "{{ update_local_vrf }}"
+  - name: "copy image {{ update_file_name }} from server {{ update_server_ipv4 }}"
+    cisco.nxos.nxos_command:
+      commands:
+        - command: "delete {{ update_server_filesystem }}{{ update_file_name }}"
+          prompt: "Do you want to delete .*"
+          answer: y
+        - command: "copy {{ update_server_protocol }}://{{ update_server_user }}@{{ update_server_ipv4 }}\
+          {{ update_server_directory }}{{ update_file_name }} bootflash:{{ update_file_name }} vrf {{ update_local_vrf }}"
+          prompt: ".* password:"
+          answer: "{{ update_server_password }}\n"
     when: not _ready
     register: _filecopy
+  
+  - debug: 
+      var: _filecopy
+      verbosity: 2
+    when: not _ready
+
+# due to issues on Tower replaced
+  # - name: copy image from server 
+  #   cisco.nxos.nxos_file_copy: 
+  #     file_pull: true
+  #     file_pull_protocol: "{{ update_server_protocol }}"
+  #     file_system: "{{ update_server_filesystem }}"
+  #     local_file: "{{ update_file_name }}"
+  #     remote_file: "{{update_server_directory}}{{ update_file_name }}"
+  #     remote_scp_server: "{{ update_server_ipv4 }}"
+  #     remote_scp_server_user: "{{ update_server_user }}"
+  #     remote_scp_server_password: "{{ update_server_password }}"
+  #     vrf: "{{ update_local_vrf }}"
+  #   when: not _ready
+  #   register: _filecopy
 
   - name: verify checksum of copied file 
     cisco.nxos.nxos_command:
       commands: "show file bootflash:{{ update_file_name }} {{ update_file_checksum_method }}"
-    when: _filecopy.changed and update_file_checksum != ""
+    when: not _ready and update_file_checksum != ""
     register: _checksumnew
 
   - name: fail if checksum of file is incorrect after copy
     fail: 
       msg: "checksum calculated: {{ _checksumnew.stdout_lines[0] }}, expected: {{ update_file_checksum }}"
-    when: _filecopy.changed and update_file_checksum != "" and _checksumnew.stdout[0] != update_file_checksum
+    when: not _ready and update_file_checksum != "" and _checksumnew.stdout[0] != update_file_checksum
 
   rescue:
   - name: delete copied file if checkum failed
