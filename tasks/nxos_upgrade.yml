@@ -16,14 +16,14 @@
       verbosity: 2
   - name: get file checksum
     cisco.nxos.nxos_command:
-      commands: "show file bootflash:{{ update_file_name }} {{ update_file_checksum_methode}}"
+      commands: "show file bootflash:{{ update_file_name }} {{ update_file_checksum_method }}"
     when: update_file_checksum != "" and _filepresence.stdout[0] != ""
     register: _checksum
   - name: skip this if file not present or checksum invalid
     set_fact:
       _ready: true
     when: _filepresence.stdout[0] != "" or
-       (_checksum.changed and _checksum.stdout_lines[0] == update_file_checksum)
+       (_checksum.changed and _checksum.stdout[0] == update_file_checksum)
 
   - name: copy image from server 
     cisco.nxos.nxos_file_copy: 
