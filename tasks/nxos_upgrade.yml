@@ -30,7 +30,7 @@
       file_pull: true
       file_pull_protocol: "{{ update_server_protocol }}"
       file_system: "{{ update_server_filesystem }}"
-      local_file: 
+      local_file: "{{ update_file_name }}"
       remote_file: "{{update_server_directory}}{{ update_file_name }}"
       remote_scp_server: "{{ update_server_ipv4 }}"
       remote_scp_server_user: "{{ update_server_user }}"
