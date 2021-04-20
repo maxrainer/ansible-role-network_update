@@ -10,8 +10,9 @@ update_server_ipv4: 127.0.0.1
 update_server_user: user
 update_server_password: changeme
 update_server_directory: "/"
-update_file_name: filename.bin
+update_file_name: image_name.bin
+update_kickstart_version: 9.3(6)
 update_local_vrf: management
-# chksum, md5sum
-update_file_checksum_methode: cksum
+# chksum, md5sum, sha256sum, sha512sum
+update_file_checksum_method: cksum
 update_file_checksum: ""

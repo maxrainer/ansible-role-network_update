@@ -1,12 +1,32 @@
 ---
 
-
-
 - name: ROLLBACK NXOS image to initial state version 
   block:
   - name: install previous image
     check_mode: no
     cisco.nxos.nxos_install_os:
       system_image_file: "{{ _old_kickstart_image }}"
-  
+    vars:
+      - ansible_command_timeout: 600
+      - ansible_connect_timeout: 600
+    register: _osrollback
+  - name: waiting for device after reboot
+    wait_for:
+      host: "{{ ansible_host }}"
+      port: 22
+      state: started
+      timeout: 500
+      delay: 30
+    vars:
+      ansible_connection: local
+  - name: get installed OS version
+    cisco.nxos.nxos_command:
+      commands: show version | json
+    register: _kickstartold
+  - name: check installed and expected OS version after rollback
+    assert:
+      that:
+        - _kickstartold['stdout'][0]['kickstart_ver_str'] == _old_kickstart
+      success_msg: successfully rolled back to previous version
+      fail_msg: rollback failed (please check manually)
   when: _old_kickstart_image != ""

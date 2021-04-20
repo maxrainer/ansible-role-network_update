@@ -19,4 +19,4 @@ galaxy_info:
       versions:
         - all
 
-  galaxy_tags: [cisco, nxos, ios, demo, lab, networking, update, upgrade]
+  galaxy_tags: [cisco, nxos, demo, lab, networking, update, upgrade]

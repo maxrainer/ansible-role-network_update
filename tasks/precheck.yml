@@ -1,13 +1,6 @@
 ---
 # precheck
 
-# - name: get facts
-#   cisco.nxos.nxos_facts:
-#   register: _facts
-# - name: debug facts
-#   debug: 
-#     var: _facts
-
 - name: Cisco NXOS get old status
   block:
   - name: get current installed OS version
@@ -19,17 +12,20 @@
       _old_kickstart_image: "{{ _old_version['stdout'][0]['kick_file_name'] | regex_replace('^.*:///') }}"
   - debug: 
       var: _old_kickstart_image
+      verbosity: 2
   when: ansible_network_os == 'nxos'
 
-- name: grep reference output from device for later comparison
+- name: "check for later comparison: {{ update_check_command }}"
   ansible.utils.cli_parse:
     command: "{{ update_check_command }}"
     parser: 
       name: "{{ update_check_parser }}"
   register: _reference_check
 
-- debug:
+- name: print reference check output
+  debug:
     var: _reference_check.parsed
+    verbosity: 2
   
 # - name: set stat module
 #   set_stats: 

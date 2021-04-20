@@ -1,5 +1,6 @@
 ---
 # main upgrade part
+# Cisco NXOS version
 
 #
 # COPY BLOCK
@@ -23,9 +24,6 @@
       _ready: true
     when: _filepresence.stdout[0] != "" or
        (_checksum.changed and _checksum.stdout_lines[0] == update_file_checksum)
-  - debug:
-      var: _ready
-      verbosity: 2
 
   - name: copy image from server 
     cisco.nxos.nxos_file_copy: 
@@ -43,17 +41,14 @@
 
   - name: verify checksum of copied file 
     cisco.nxos.nxos_command:
-      commands: "show file bootflash:{{ update_file_name }} {{ update_file_checksum_methode}}"
+      commands: "show file bootflash:{{ update_file_name }} {{ update_file_checksum_method }}"
     when: _filecopy.changed and update_file_checksum != ""
     register: _checksumnew
-  - debug:
-      var: _checksumnew
-      verbosity: 2
 
   - name: fail if checksum of file is incorrect after copy
     fail: 
       msg: "checksum calculated: {{ _checksumnew.stdout_lines[0] }}, expected: {{ update_file_checksum }}"
-    when: _filecopy.changed and update_file_checksum != "" and _checksumnew.stdout_lines[0] != update_file_checksum
+    when: _filecopy.changed and update_file_checksum != "" and _checksumnew.stdout[0] != update_file_checksum
 
   rescue:
   - name: delete copied file if checkum failed
@@ -62,8 +57,8 @@
         - command: "delete {{ update_server_filesystem }}{{ update_file_name }}"
           prompt: "Do you want to delete .*"
           answer: y
-  - set_fact:
-      _failed: true
+  - fail:
+      msg: copy process failed, image deleted from device
 
 #
 # INSTALL OS IMAGE BLOCK
@@ -80,6 +75,7 @@
     register: _osinstall
   - debug:
       var: _osinstall
+      verbosity: 2
   # not sure this is needed
   # - name: waiting for update finished and reboot
   #   wait_for:
@@ -105,7 +101,6 @@
     assert:
       that:
         - _kickstart['stdout'][0]['kickstart_ver_str'] == update_kickstart_version
-      success_msg: right kickstart version detected
+      success_msg: expected kickstart version detected
       fail_msg: wrong kickstart version detected
-
   when: not _failed

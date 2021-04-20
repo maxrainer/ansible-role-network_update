@@ -18,3 +18,7 @@
     apply:
       tags: postcheck
   tags: [postcheck]
+
+- include_tasks: 
+    file: nxos_rollback.yml
+  when: _rollback
