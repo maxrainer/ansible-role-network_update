@@ -37,6 +37,7 @@
           {{ update_server_directory }}{{ update_file_name }} bootflash:{{ update_file_name }} vrf {{ update_local_vrf }}"
           prompt: ".* password:"
           answer: "{{ update_server_password }}\n"
+    changed_when: true
     when: not _ready
     register: _filecopy
   
@@ -94,6 +95,9 @@
       - ansible_command_timeout: 600
       - ansible_connect_timeout: 600
     register: _osinstall
+    
+  # avoiding a paramiko connection error here
+  - meta: reset_connection
   - debug:
       var: _osinstall
       verbosity: 2
