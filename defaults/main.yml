@@ -19,5 +19,5 @@ update_local_vrf: management
 update_file_checksum_method: cksum
 update_file_checksum: ""
 
-# if job isolation (on tower) enabled 
-update_isolated: false
+# rhel8 workaround
+update_spawn_allowed: false

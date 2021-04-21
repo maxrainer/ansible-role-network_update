@@ -27,7 +27,7 @@
       _ready: true
     when: _filepresence.stdout[0] != "" and _checksum.stdout[0] == update_file_checksum
 
-# when job execution is isolated
+# on RHEL 8 spawn (needed by expect) is not allowed (default here)
   - name: "manual copy image {{ update_file_name }} from server {{ update_server_ipv4 }}"
     cisco.nxos.nxos_command:
       commands:
@@ -39,10 +39,10 @@
           prompt: ".* password:"
           answer: "{{ update_server_password }}\n"
     changed_when: true
-    when: not _ready and update_isolated
+    when: not _ready and not update_spawn_allowed
     register: _filecopy
   
-# when job execution is not isolated
+# if spawn is allowed we can use the module
   - name: "module copy image {{ update_file_name }} from server {{ update_server_ipv4 }}"
     cisco.nxos.nxos_file_copy: 
       file_pull: true
@@ -54,7 +54,7 @@
       remote_scp_server_user: "{{ update_server_user }}"
       remote_scp_server_password: "{{ update_server_password }}"
       vrf: "{{ update_local_vrf }}"
-    when: not _ready and not update_isolated
+    when: not _ready and update_spawn_allowed
     register: _filecopy
 
   - debug: 
