@@ -21,3 +21,5 @@ update_file_checksum: ""
 
 # rhel8 workaround
 update_spawn_allowed: false
+# only needed and overridden for testing
+update_file_name_old: "{{ update_file_name }}"
