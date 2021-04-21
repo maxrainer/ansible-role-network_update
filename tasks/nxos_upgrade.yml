@@ -34,7 +34,7 @@
       responses: 
         (?i)password: "{{ ansible_ssh_pass }}"
     delegate_to: "{{ update_server_inventory_hostname | default('localhost') }}"
-    no_log: true
+    no_log: "{{ update_log_hidden }}"
     when: not _ready and update_server_lead
     register: _filecopy
 

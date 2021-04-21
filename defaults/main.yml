@@ -23,6 +23,8 @@ update_file_checksum: ""
 update_server_inventory_hostname: ""
 # scp copy process initiated from server
 update_server_lead: false
+# hide logging when password might be shown
+update_log_hidden: true
 
 # rhel8 workaround
 update_spawn_allowed: false
