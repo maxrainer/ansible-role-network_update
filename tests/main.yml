@@ -3,7 +3,7 @@
 - name: MAIN
   hosts: nxos
   gather_facts: no
-  connection: network_cli
+  # connection: local
   roles: 
     - ../../network-update
   # vars:

@@ -19,6 +19,11 @@ update_local_vrf: management
 update_file_checksum_method: cksum
 update_file_checksum: ""
 
+# if scp initiated on server, inventory hostname
+update_server_inventory_hostname: ""
+# scp copy process initiated from server
+update_server_lead: false
+
 # rhel8 workaround
 update_spawn_allowed: false
 # only needed and overridden for testing

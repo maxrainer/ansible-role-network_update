@@ -27,6 +27,16 @@
       _ready: true
     when: _filepresence.stdout[0] != "" and _checksum.stdout[0] == update_file_checksum
 
+  - name: "copy image initiated from server: {{ update_server_inventory_hostname }}"
+    ansible.builtin.expect: 
+      command: "scp {{ update_server_directory }}{{ update_file_name }} {{ ansible_user }}@{{ ansible_host }}:{{ update_file_name }}"
+      responses: 
+        (?i)password: "{{ ansible_ssh_pass }}"
+    delegate_to: "{{ update_server_inventory_hostname | default('localhost') }}"
+    no_log: true
+    when: not _ready and update_server_lead
+    register: _filecopy
+
 # on RHEL 8 spawn (needed by expect) is not allowed (default here)
   - name: "manual copy image {{ update_file_name }} from server {{ update_server_ipv4 }}"
     cisco.nxos.nxos_command:
@@ -39,9 +49,9 @@
           prompt: ".* password:"
           answer: "{{ update_server_password }}\n"
     changed_when: true
-    when: not _ready and not update_spawn_allowed
+    when: not _ready and not update_spawn_allowed and not update_server_lead
     register: _filecopy
-  
+
 # if spawn is allowed we can use the module
   - name: "module copy image {{ update_file_name }} from server {{ update_server_ipv4 }}"
     cisco.nxos.nxos_file_copy: 
@@ -54,7 +64,7 @@
       remote_scp_server_user: "{{ update_server_user }}"
       remote_scp_server_password: "{{ update_server_password }}"
       vrf: "{{ update_local_vrf }}"
-    when: not _ready and update_spawn_allowed
+    when: not _ready and update_spawn_allowed and not update_server_lead
     register: _filecopy
 
   - debug: 
