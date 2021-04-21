@@ -27,7 +27,8 @@
       _ready: true
     when: _filepresence.stdout[0] != "" and _checksum.stdout[0] == update_file_checksum
 
-  - name: "copy image {{ update_file_name }} from server {{ update_server_ipv4 }}"
+# when job execution is isolated
+  - name: "manual copy image {{ update_file_name }} from server {{ update_server_ipv4 }}"
     cisco.nxos.nxos_command:
       commands:
         - command: "delete {{ update_server_filesystem }}{{ update_file_name }}"
@@ -38,28 +39,28 @@
           prompt: ".* password:"
           answer: "{{ update_server_password }}\n"
     changed_when: true
-    when: not _ready
+    when: not _ready and update_isolated
     register: _filecopy
   
+# when job execution is not isolated
+  - name: "module copy image {{ update_file_name }} from server {{ update_server_ipv4 }}"
+    cisco.nxos.nxos_file_copy: 
+      file_pull: true
+      file_pull_protocol: "{{ update_server_protocol }}"
+      file_system: "{{ update_server_filesystem }}"
+      local_file: "{{ update_file_name }}"
+      remote_file: "{{update_server_directory}}{{ update_file_name }}"
+      remote_scp_server: "{{ update_server_ipv4 }}"
+      remote_scp_server_user: "{{ update_server_user }}"
+      remote_scp_server_password: "{{ update_server_password }}"
+      vrf: "{{ update_local_vrf }}"
+    when: not _ready and not update_isolated
+    register: _filecopy
+
   - debug: 
       var: _filecopy
       verbosity: 2
     when: not _ready
-
-# due to issues on Tower replaced
-  # - name: copy image from server 
-  #   cisco.nxos.nxos_file_copy: 
-  #     file_pull: true
-  #     file_pull_protocol: "{{ update_server_protocol }}"
-  #     file_system: "{{ update_server_filesystem }}"
-  #     local_file: "{{ update_file_name }}"
-  #     remote_file: "{{update_server_directory}}{{ update_file_name }}"
-  #     remote_scp_server: "{{ update_server_ipv4 }}"
-  #     remote_scp_server_user: "{{ update_server_user }}"
-  #     remote_scp_server_password: "{{ update_server_password }}"
-  #     vrf: "{{ update_local_vrf }}"
-  #   when: not _ready
-  #   register: _filecopy
 
   - name: verify checksum of copied file 
     cisco.nxos.nxos_command:
@@ -95,7 +96,7 @@
       - ansible_command_timeout: 600
       - ansible_connect_timeout: 600
     register: _osinstall
-    
+
   # avoiding a paramiko connection error here
   - meta: reset_connection
   - debug:
