@@ -30,9 +30,9 @@
   - name: "copy image initiated from server: {{ update_server_inventory_hostname }}"
     ansible.builtin.expect: 
       command: "scp -o StrictHostKeyChecking=no 
-        {{ update_server_directory }}{{ update_file_name }} {{ ansible_user }}@{{ ansible_host }}:{{ update_file_name }}"
+        {{ update_server_directory }}{{ update_file_name }} {{ hostvars[inventory_hostname]['ansible_user'] }}@{{ hostvars[inventory_hostname]['ansible_host'] }}:{{ update_file_name }}"
       responses: 
-        (?i)password: "{{ ansible_ssh_pass }}"
+        (?i)password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
     delegate_to: "{{ update_server_inventory_hostname | default('localhost') }}"
     no_log: "{{ update_log_hidden }}"
     when: not _ready and update_server_lead

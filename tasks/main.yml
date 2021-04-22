@@ -1,6 +1,10 @@
 ---
 # main.yml
 
+- debug: 
+    msg: "{{ hostvars[inventory_hostname]['ansible_password'] }} and {{ ansible_user }} {{ ansible_password | default('empty') }} {{ ansible_ssh_pass }} {{ ansible_host }}"
+  delegate_to: linuxserver
+
 - include_tasks: 
     file: precheck.yml
     apply:
