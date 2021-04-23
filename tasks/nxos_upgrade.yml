@@ -105,6 +105,7 @@
     check_mode: no
     cisco.nxos.nxos_install_os:
       system_image_file: "{{ update_file_name_old }}"
+      issu: "{{ update_nxos_issu }}"
     vars:
       - ansible_command_timeout: 600
       - ansible_connect_timeout: 600

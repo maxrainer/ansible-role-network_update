@@ -29,6 +29,8 @@ update_server_directory: "/"
 update_file_checksum_method: cksum
 update_file_checksum: ""
 
+update_nxos_issu: desired
+
 # hide logging when password might be shown
 update_log_hidden: true
 
