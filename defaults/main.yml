@@ -5,24 +5,30 @@
 update_check_command: show ip interface brief
 update_check_parser: ansible.netcommon.pyats
 
+# scp copy process initiated from server
+update_server_lead: false
+# if scp initiated on server, inventory hostname
+update_server_inventory_hostname: ""
+
+# needed if network device is active part
 update_server_protocol: scp
 update_server_filesystem: "bootflash:"
 update_server_timeout: 300
 update_server_ipv4: 127.0.0.1
 update_server_user: user
 update_server_password: changeme
-update_server_directory: "/"
-update_file_name: image_name.bin
-update_kickstart_version: 9.3(6)
 update_local_vrf: management
+
+# always needed
+# new OS image name 
+update_file_name: image_name.bin
+# this version is expected to run on the device after upgrade
+update_kickstart_version: 9.3(6)
+update_server_directory: "/"
 # chksum, md5sum, sha256sum, sha512sum
 update_file_checksum_method: cksum
 update_file_checksum: ""
 
-# if scp initiated on server, inventory hostname
-update_server_inventory_hostname: ""
-# scp copy process initiated from server
-update_server_lead: false
 # hide logging when password might be shown
 update_log_hidden: true
 

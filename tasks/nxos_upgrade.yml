@@ -27,12 +27,15 @@
       _ready: true
     when: _filepresence.stdout[0] != "" and _checksum.stdout[0] == update_file_checksum
 
+# copy image initiated from SCP server (update_server_lead)
+# deletegate_to host must be defined in ansible inventory
   - name: "copy image initiated from server: {{ update_server_inventory_hostname }}"
     ansible.builtin.expect: 
       command: "scp -o StrictHostKeyChecking=no 
         {{ update_server_directory }}{{ update_file_name }} {{ hostvars[inventory_hostname]['ansible_user'] }}@{{ hostvars[inventory_hostname]['ansible_host'] }}:{{ update_file_name }}"
       responses: 
         (?i)password: "{{ hostvars[inventory_hostname]['ansible_password'] }}"
+      timeout: "{{ update_server_timeout }}"
     delegate_to: "{{ update_server_inventory_hostname | default('localhost') }}"
     no_log: "{{ update_log_hidden }}"
     when: not _ready and update_server_lead
@@ -67,7 +70,6 @@
       vrf: "{{ update_local_vrf }}"
     when: not _ready and update_spawn_allowed and not update_server_lead
     register: _filecopy
-
   - debug: 
       var: _filecopy
       verbosity: 2
