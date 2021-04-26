@@ -99,10 +99,22 @@
 #
 # INSTALL OS IMAGE BLOCK
 # due to a bug on netcommon module the timeout vars here are ignored
-# have to set it at ansible.cfg too!
+# have to set it at ansible.cfg
 #
 - name: Cisco NXOS software update block
   block: 
+  - name: check configuration compatibility to new image
+    cisco.nxos.nxos_command:
+      commands: "show incompatibility-all nxos bootflash:/{{ update_image_name_new }}"
+      wait_for: result[0] contains No incompatibility configurations
+      retries: 1
+    vars:
+      - ansible_command_timeout: 600
+      - ansible_connect_timeout: 600
+    register: _incompatibility
+  - debug:
+      var: _incompatibility
+      verbosity: 2
   - name: install OS on device
     check_mode: no
     cisco.nxos.nxos_install_os:
