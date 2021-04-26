@@ -98,18 +98,23 @@
 
 #
 # INSTALL OS IMAGE BLOCK
+# due to a bug on netcommon module the timeout vars here are ignored
+# have to set it at ansible.cfg too!
 #
 - name: Cisco NXOS software update block
   block: 
   - name: install OS on device
     check_mode: no
     cisco.nxos.nxos_install_os:
-      system_image_file: "{{ update_file_name_old }}"
+      system_image_file: "{{ update_image_name_new }}"
       issu: "{{ update_nxos_issu }}"
     vars:
       - ansible_command_timeout: 600
       - ansible_connect_timeout: 600
     register: _osinstall
+  - debug:
+      var: _osinstall
+      verbosity: 2
 
   # avoiding a paramiko connection error here
   - meta: reset_connection

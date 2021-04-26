@@ -1,0 +1,11 @@
+show incompatibility-all nxos bootflash:/nxos....
+No incompatibility configurations
+
+install all nxos bootflash:/nxos....
+
+Do you want to continue with the installation (y/n)?  [n] y
+
+
+reboot start dauert ca. 2 minuten
+reboot dauert ca. > 3 minutes 
+

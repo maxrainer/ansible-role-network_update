@@ -29,12 +29,12 @@ update_server_directory: "/"
 update_file_checksum_method: cksum
 update_file_checksum: ""
 
-update_nxos_issu: desired
+update_nxos_issu: no
 
 # hide logging when password might be shown
 update_log_hidden: true
 
 # rhel8 workaround
 update_spawn_allowed: false
-# only needed and overridden for testing
-update_file_name_old: "{{ update_file_name }}"
+# only needed to be overridden for testing (virtual images)
+update_image_name_new: "{{ update_file_name }}"
